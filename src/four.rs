@@ -35,60 +35,46 @@ fn count_xmas(start_location: Location, lines: &Vec<String>) -> i32 {
     let letters_to_check = ['X', 'M', 'A', 'S'];
 
     let mut num_found = 0;
+
+    let mut deltas = Vec::new();
+
     // check top down
     let delta = (-1, 0);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
-    }
+    deltas.push(delta);
 
     // check bottom up
     let delta = (1, 0);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
-    }
+    deltas.push(delta);
 
     // check left right
     let delta = (0, 1);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
-    }
+    deltas.push(delta);
 
     // check right left
     let delta = (0, -1);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
-    }
+    deltas.push(delta);
 
     // check diag upper left
     let delta = (-1, -1);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
-    }
+    deltas.push(delta);
 
     // check diag upper right
     let delta = (-1, 1);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
-    }
+    deltas.push(delta);
 
     // check diag bottom left
     let delta = (1, -1);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
-    }
+    deltas.push(delta);
 
     // check diag bottom right
     let delta = (1, 1);
-    let found = iter(start_location.clone(), lines, delta, letters_to_check);
-    if found {
-        num_found += 1;
+    deltas.push(delta);
+
+    for delta in deltas {
+        let found = iter(start_location.clone(), lines, delta, letters_to_check);
+        if found {
+            num_found += 1;
+        }
     }
 
     num_found
