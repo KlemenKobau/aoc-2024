@@ -1,8 +1,7 @@
-use one::one;
-
 mod one;
+mod two;
 mod util;
 
 fn main() {
-    one();
+    two::two();
 }
