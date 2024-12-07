@@ -2,7 +2,7 @@ use crate::util::read_lines;
 
 pub fn four() {
     let read_lines = read_lines("data/day-4/input.txt");
-    let x_pos = find_all_x(&read_lines);
+    let x_pos = find_all(&read_lines, 'X');
 
     let mut count = 0;
     for loc in x_pos {
@@ -12,14 +12,91 @@ pub fn four() {
     }
 
     println!("{}", count);
+
+    let a_pos = find_all(&read_lines, 'A');
+
+    let mut count = 0;
+    for pos in a_pos {
+        let is_x = check_x(pos, &read_lines);
+        if is_x {
+            count += 1;
+        }
+    }
+    println!("{}", count);
 }
 
-fn find_all_x(lines: &Vec<String>) -> Vec<Location> {
+fn check_x(a_pos: Location, lines: &Vec<String>) -> bool {
+    let Location {
+        vec_number,
+        pos_in_string,
+    } = a_pos;
+
+    let ms = ['M', 'S'];
+
+    let top_left = Location {
+        vec_number: vec_number - 1,
+        pos_in_string: pos_in_string - 1,
+    };
+    let check_top_left = get_letter(top_left, &lines);
+
+    let bottom_right = Location {
+        vec_number: vec_number + 1,
+        pos_in_string: pos_in_string + 1,
+    };
+    let check_bottom_right = get_letter(bottom_right, &lines);
+
+    if check_top_left.is_none() || check_bottom_right.is_none() {
+        return false;
+    }
+
+    let tl = check_top_left.unwrap();
+    let br = check_bottom_right.unwrap();
+    if !(ms.contains(&tl) && ms.contains(&br) && tl != br) {
+        return false;
+    }
+
+    let top_right = Location {
+        vec_number: vec_number - 1,
+        pos_in_string: pos_in_string + 1,
+    };
+    let check_top_right = get_letter(top_right, &lines);
+
+    let bottom_left = Location {
+        vec_number: vec_number + 1,
+        pos_in_string: pos_in_string - 1,
+    };
+    let check_bottom_left = get_letter(bottom_left, &lines);
+
+    if check_top_right.is_none() || check_bottom_left.is_none() {
+        return false;
+    }
+
+    let tr = check_top_right.unwrap();
+    let bl = check_bottom_left.unwrap();
+    ms.contains(&tr) && ms.contains(&bl) && tr != bl
+}
+
+fn get_letter(a_pos: Location, lines: &Vec<String>) -> Option<char> {
+    let Location {
+        vec_number,
+        pos_in_string,
+    } = a_pos;
+
+    if vec_number < 0 || pos_in_string < 0 {
+        return None;
+    }
+
+    lines
+        .get(vec_number as usize)
+        .and_then(|x| x.chars().nth(pos_in_string as usize))
+}
+
+fn find_all(lines: &Vec<String>, searching_for: char) -> Vec<Location> {
     let mut pos = Vec::new();
 
     for (vec_number, line) in lines.iter().enumerate() {
         for (pos_in_string, letter) in line.chars().enumerate() {
-            if letter == 'X' {
+            if letter == searching_for {
                 pos.push(Location {
                     vec_number: vec_number as i32,
                     pos_in_string: pos_in_string as i32,
